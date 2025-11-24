@@ -2,6 +2,116 @@ import { useState, useEffect } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls, Grid, Sky } from '@react-three/drei'
 import Track from './components/Track'
+import Car from './components/Car'
+import ChaseCamera from './components/ChaseCamera'
+import { useTelemetry } from './hooks/useTelemetry'
+
+function Scene({ trackData }) {
+  const { currentTelemetry, isPlaying, setIsPlaying, progress } = useTelemetry(trackData)
+  const [cameraMode, setCameraMode] = useState('orbit') // 'orbit' or 'chase'
+  
+  // Calculate car rotation from position
+  const getCarRotation = () => {
+    if (!currentTelemetry || !currentTelemetry.position) return 0
+    // Simple rotation based on steering angle for now
+    return (currentTelemetry.steeringAngle || 0) / 200
+  }
+  
+  return (
+    <>
+      {/* Lighting */}
+      <ambientLight intensity={0.5} />
+      <directionalLight position={[100, 100, 50]} intensity={1} />
+      
+      {/* Sky */}
+      <Sky sunPosition={[100, 20, 100]} />
+      
+      {/* Track */}
+      <Track trackData={trackData} />
+      
+      {/* Car */}
+      {currentTelemetry && (
+        <Car
+          position={currentTelemetry.position}
+          rotation={getCarRotation()}
+          speed={currentTelemetry.speed}
+          steeringAngle={currentTelemetry.steeringAngle}
+        />
+      )}
+      
+      {/* Ground grid */}
+      <Grid 
+        args={[2000, 2000]} 
+        cellSize={50} 
+        cellColor="#444" 
+        sectionColor="#666"
+        fadeDistance={1500}
+      />
+      
+      {/* Camera */}
+      {cameraMode === 'chase' && currentTelemetry ? (
+        <ChaseCamera target={currentTelemetry} />
+      ) : (
+        <OrbitControls 
+          enableDamping
+          dampingFactor={0.05}
+          minDistance={100}
+          maxDistance={2000}
+        />
+      )}
+      
+      {/* UI Controls */}
+      <Html>
+        <div style={{
+          position: 'absolute',
+          bottom: 20,
+          left: '50%',
+          transform: 'translateX(-50%)',
+          display: 'flex',
+          gap: '10px'
+        }}>
+          <button
+            onClick={() => setIsPlaying(!isPlaying)}
+            style={{
+              padding: '10px 20px',
+              background: 'rgba(0,0,0,0.8)',
+              color: '#fff',
+              border: '1px solid #fff',
+              borderRadius: '5px',
+              cursor: 'pointer',
+              fontFamily: 'monospace'
+            }}
+          >
+            {isPlaying ? '⏸ Pause' : '▶ Play'}
+          </button>
+          <button
+            onClick={() => setCameraMode(cameraMode === 'orbit' ? 'chase' : 'orbit')}
+            style={{
+              padding: '10px 20px',
+              background: 'rgba(0,0,0,0.8)',
+              color: '#fff',
+              border: '1px solid #fff',
+              borderRadius: '5px',
+              cursor: 'pointer',
+              fontFamily: 'monospace'
+            }}
+          >
+            📷 {cameraMode === 'orbit' ? 'Chase Cam' : 'Orbit Cam'}
+          </button>
+        </div>
+      </Html>
+    </>
+  )
+}
+
+// Simple HTML component for UI
+function Html({ children }) {
+  return (
+    <group>
+      {children}
+    </group>
+  )
+}
 
 function App() {
   const [trackData, setTrackData] = useState(null)
@@ -9,7 +119,6 @@ function App() {
   const [error, setError] = useState(null)
   
   useEffect(() => {
-    // Load track data
     fetch('/tracks/indianapolis.json')
       .then(res => res.json())
       .then(data => {
@@ -57,32 +166,7 @@ function App() {
   return (
     <div style={{ width: '100vw', height: '100vh', background: '#000' }}>
       <Canvas camera={{ position: [0, 500, 500], fov: 60 }}>
-        {/* Lighting */}
-        <ambientLight intensity={0.5} />
-        <directionalLight position={[100, 100, 50]} intensity={1} />
-        
-        {/* Sky */}
-        <Sky sunPosition={[100, 20, 100]} />
-        
-        {/* Track */}
-        <Track trackData={trackData} />
-        
-        {/* Ground grid */}
-        <Grid 
-          args={[2000, 2000]} 
-          cellSize={50} 
-          cellColor="#444" 
-          sectionColor="#666"
-          fadeDistance={1500}
-        />
-        
-        {/* Camera controls */}
-        <OrbitControls 
-          enableDamping
-          dampingFactor={0.05}
-          minDistance={100}
-          maxDistance={2000}
-        />
+        <Scene trackData={trackData} />
       </Canvas>
       
       {/* UI Overlay */}
@@ -97,11 +181,11 @@ function App() {
         padding: '10px',
         borderRadius: '5px'
       }}>
-        <div><strong>Apex Prime - Phase 1</strong></div>
+        <div><strong>Apex Prime - Phase 2</strong></div>
         <div>Track: {trackData?.name}</div>
-        <div>Points: {trackData?.points?.length}</div>
+        <div>Status: Animating</div>
         <div style={{ marginTop: '10px', fontSize: '12px', opacity: 0.7 }}>
-          Mouse: Orbit | Scroll: Zoom
+          Red car driving on track
         </div>
       </div>
     </div>
