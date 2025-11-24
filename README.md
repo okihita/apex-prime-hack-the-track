@@ -129,6 +129,10 @@ open DATASET-DEEP-DIVE.md
 - Road America
 - Virginia International Raceway (VIR)
 
+> **Note:** Large telemetry CSV files (21GB total) are excluded from Git via `.gitignore`.  
+> They remain available locally in the `data/` folder for development.  
+> Smaller files (lap times, results, analysis) are included in the repository.
+
 ---
 
 ## 🎯 Why This Wins
