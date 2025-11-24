@@ -1,23 +1,24 @@
 import { useState, useEffect } from 'react'
 
-export function useTelemetry(trackData) {
+export function useTelemetry(trackData, isPlaying = true) {
   const [telemetryData, setTelemetryData] = useState(null)
   const [currentIndex, setCurrentIndex] = useState(0)
-  const [isPlaying, setIsPlaying] = useState(true)
   
   useEffect(() => {
     if (!trackData || !trackData.points) return
     
+    console.log('Generating telemetry for', trackData.points.length, 'points')
+    
     // Generate simple telemetry data for demo
-    // In real implementation, this would load from CSV
     const telemetry = trackData.points.map((point, i) => ({
       position: point,
-      speed: 100 + Math.sin(i / 10) * 30, // Varying speed
-      steeringAngle: Math.sin(i / 5) * 200, // Varying steering
+      speed: 100 + Math.sin(i / 10) * 30,
+      steeringAngle: Math.sin(i / 5) * 200,
       timestamp: i * 0.1
     }))
     
     setTelemetryData(telemetry)
+    console.log('Telemetry generated:', telemetry[0])
   }, [trackData])
   
   useEffect(() => {
@@ -25,10 +26,10 @@ export function useTelemetry(trackData) {
     
     const interval = setInterval(() => {
       setCurrentIndex(prev => {
-        if (prev >= telemetryData.length - 1) return 0
-        return prev + 1
+        const next = prev >= telemetryData.length - 1 ? 0 : prev + 1
+        return next
       })
-    }, 50) // Update every 50ms (20 FPS for telemetry)
+    }, 50)
     
     return () => clearInterval(interval)
   }, [isPlaying, telemetryData])
@@ -37,8 +38,6 @@ export function useTelemetry(trackData) {
   
   return {
     currentTelemetry,
-    isPlaying,
-    setIsPlaying,
     progress: telemetryData ? currentIndex / telemetryData.length : 0
   }
 }

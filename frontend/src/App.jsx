@@ -6,8 +6,10 @@ import Car from './components/Car'
 import ChaseCamera from './components/ChaseCamera'
 import { useTelemetry } from './hooks/useTelemetry'
 
-function Scene({ trackData, cameraMode }) {
-  const { currentTelemetry } = useTelemetry(trackData)
+function Scene({ trackData, cameraMode, isPlaying }) {
+  const { currentTelemetry } = useTelemetry(trackData, isPlaying)
+  
+  console.log('Current telemetry:', currentTelemetry)
   
   // Calculate car rotation from position
   const getCarRotation = () => {
@@ -116,7 +118,7 @@ function App() {
   return (
     <div style={{ width: '100vw', height: '100vh', background: '#000' }}>
       <Canvas camera={{ position: [0, 500, 500], fov: 60 }}>
-        <Scene trackData={trackData} cameraMode={cameraMode} />
+        <Scene trackData={trackData} cameraMode={cameraMode} isPlaying={isPlaying} />
       </Canvas>
       
       {/* UI Overlay */}
