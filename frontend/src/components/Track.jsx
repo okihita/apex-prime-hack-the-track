@@ -15,12 +15,25 @@ export default function Track({ trackData }) {
   if (!geometry) return null
   
   return (
-    <mesh geometry={geometry} receiveShadow>
-      <meshStandardMaterial 
-        color="#1a1a1a"
-        roughness={0.9}
-        metalness={0.1}
-      />
-    </mesh>
+    <group>
+      {/* Main track surface - medium gray */}
+      <mesh geometry={geometry} receiveShadow>
+        <meshStandardMaterial 
+          color="#666666"
+          roughness={0.8}
+          metalness={0.1}
+        />
+      </mesh>
+      
+      {/* White center line */}
+      <mesh geometry={geometry}>
+        <meshStandardMaterial 
+          color="#ffffff"
+          roughness={0.9}
+          transparent
+          opacity={0.3}
+        />
+      </mesh>
+    </group>
   )
 }
