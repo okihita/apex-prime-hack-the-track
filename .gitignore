@@ -1,0 +1,38 @@
+# Large telemetry CSV files (1-3GB each)
+data/**/*telemetry*.csv
+
+# Keep smaller files (lap times, results, etc)
+!data/**/*lap*.csv
+!data/**/*Results*.CSV
+!data/**/*Weather*.CSV
+!data/**/*Championship*.csv
+!data/**/*Analysis*.CSV
+!data/**/*Best*.CSV
+
+# OS files
+.DS_Store
+.vscode/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+*.egg-info/
+dist/
+build/
+
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+.env
+
+# IDE
+.idea/
+*.swp
+*.swo
+*~
