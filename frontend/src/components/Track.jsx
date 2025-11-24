@@ -10,8 +10,8 @@ export default function Track({ trackData }) {
     const curve = new CatmullRomCurve3(points, true)
     
     // Create flat ribbon geometry
-    const trackWidth = 20 // Wide track
-    const segments = 500
+    const trackWidth = 20
+    const segments = 100 // Reduced from 500 to 100
     const vertices = []
     const indices = []
     

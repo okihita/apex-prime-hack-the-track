@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react'
+import { useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 
 export default function Car({ position, rotation, speed, steeringAngle }) {
@@ -9,12 +9,6 @@ export default function Car({ position, rotation, speed, steeringAngle }) {
   const carWidth = 8
   const carLength = 16
   const carHeight = 6
-  
-  useEffect(() => {
-    if (position) {
-      console.log('Car position:', position)
-    }
-  }, [position])
   
   useFrame((state, delta) => {
     if (!carRef.current) return

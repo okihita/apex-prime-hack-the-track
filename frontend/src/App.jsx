@@ -9,8 +9,6 @@ import { useTelemetry } from './hooks/useTelemetry'
 function Scene({ trackData, cameraMode, isPlaying }) {
   const { currentTelemetry } = useTelemetry(trackData, isPlaying)
   
-  console.log('Current telemetry:', currentTelemetry)
-  
   // Calculate car rotation from position
   const getCarRotation = () => {
     if (!currentTelemetry || !currentTelemetry.position) return 0

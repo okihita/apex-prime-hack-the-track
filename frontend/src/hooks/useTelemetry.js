@@ -7,8 +7,6 @@ export function useTelemetry(trackData, isPlaying = true) {
   useEffect(() => {
     if (!trackData || !trackData.points) return
     
-    console.log('Generating telemetry for', trackData.points.length, 'points')
-    
     // Generate simple telemetry data for demo
     const telemetry = trackData.points.map((point, i) => ({
       position: point,
@@ -18,7 +16,6 @@ export function useTelemetry(trackData, isPlaying = true) {
     }))
     
     setTelemetryData(telemetry)
-    console.log('Telemetry generated:', telemetry[0])
   }, [trackData])
   
   useEffect(() => {
