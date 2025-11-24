@@ -6,14 +6,12 @@ import Car from './components/Car'
 import ChaseCamera from './components/ChaseCamera'
 import { useTelemetry } from './hooks/useTelemetry'
 
-function Scene({ trackData }) {
-  const { currentTelemetry, isPlaying, setIsPlaying, progress } = useTelemetry(trackData)
-  const [cameraMode, setCameraMode] = useState('orbit') // 'orbit' or 'chase'
+function Scene({ trackData, cameraMode }) {
+  const { currentTelemetry } = useTelemetry(trackData)
   
   // Calculate car rotation from position
   const getCarRotation = () => {
     if (!currentTelemetry || !currentTelemetry.position) return 0
-    // Simple rotation based on steering angle for now
     return (currentTelemetry.steeringAngle || 0) / 200
   }
   
@@ -59,57 +57,7 @@ function Scene({ trackData }) {
           maxDistance={2000}
         />
       )}
-      
-      {/* UI Controls */}
-      <Html>
-        <div style={{
-          position: 'absolute',
-          bottom: 20,
-          left: '50%',
-          transform: 'translateX(-50%)',
-          display: 'flex',
-          gap: '10px'
-        }}>
-          <button
-            onClick={() => setIsPlaying(!isPlaying)}
-            style={{
-              padding: '10px 20px',
-              background: 'rgba(0,0,0,0.8)',
-              color: '#fff',
-              border: '1px solid #fff',
-              borderRadius: '5px',
-              cursor: 'pointer',
-              fontFamily: 'monospace'
-            }}
-          >
-            {isPlaying ? '⏸ Pause' : '▶ Play'}
-          </button>
-          <button
-            onClick={() => setCameraMode(cameraMode === 'orbit' ? 'chase' : 'orbit')}
-            style={{
-              padding: '10px 20px',
-              background: 'rgba(0,0,0,0.8)',
-              color: '#fff',
-              border: '1px solid #fff',
-              borderRadius: '5px',
-              cursor: 'pointer',
-              fontFamily: 'monospace'
-            }}
-          >
-            📷 {cameraMode === 'orbit' ? 'Chase Cam' : 'Orbit Cam'}
-          </button>
-        </div>
-      </Html>
     </>
-  )
-}
-
-// Simple HTML component for UI
-function Html({ children }) {
-  return (
-    <group>
-      {children}
-    </group>
   )
 }
 
@@ -117,6 +65,8 @@ function App() {
   const [trackData, setTrackData] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [isPlaying, setIsPlaying] = useState(true)
+  const [cameraMode, setCameraMode] = useState('orbit')
   
   useEffect(() => {
     fetch('/tracks/indianapolis.json')
@@ -166,7 +116,7 @@ function App() {
   return (
     <div style={{ width: '100vw', height: '100vh', background: '#000' }}>
       <Canvas camera={{ position: [0, 500, 500], fov: 60 }}>
-        <Scene trackData={trackData} />
+        <Scene trackData={trackData} cameraMode={cameraMode} />
       </Canvas>
       
       {/* UI Overlay */}
@@ -183,10 +133,50 @@ function App() {
       }}>
         <div><strong>Apex Prime - Phase 2</strong></div>
         <div>Track: {trackData?.name}</div>
-        <div>Status: Animating</div>
+        <div>Status: {isPlaying ? 'Playing' : 'Paused'}</div>
+        <div>Camera: {cameraMode}</div>
         <div style={{ marginTop: '10px', fontSize: '12px', opacity: 0.7 }}>
           Red car driving on track
         </div>
+      </div>
+      
+      {/* Controls */}
+      <div style={{
+        position: 'absolute',
+        bottom: 20,
+        left: '50%',
+        transform: 'translateX(-50%)',
+        display: 'flex',
+        gap: '10px'
+      }}>
+        <button
+          onClick={() => setIsPlaying(!isPlaying)}
+          style={{
+            padding: '10px 20px',
+            background: 'rgba(0,0,0,0.8)',
+            color: '#fff',
+            border: '1px solid #fff',
+            borderRadius: '5px',
+            cursor: 'pointer',
+            fontFamily: 'monospace'
+          }}
+        >
+          {isPlaying ? '⏸ Pause' : '▶ Play'}
+        </button>
+        <button
+          onClick={() => setCameraMode(cameraMode === 'orbit' ? 'chase' : 'orbit')}
+          style={{
+            padding: '10px 20px',
+            background: 'rgba(0,0,0,0.8)',
+            color: '#fff',
+            border: '1px solid #fff',
+            borderRadius: '5px',
+            cursor: 'pointer',
+            fontFamily: 'monospace'
+          }}
+        >
+          📷 {cameraMode === 'orbit' ? 'Chase Cam' : 'Orbit Cam'}
+        </button>
       </div>
     </div>
   )
