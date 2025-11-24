@@ -7,7 +7,7 @@ export default function Track({ trackData }) {
     
     const points = trackData.points.map(p => new Vector3(p[0], p[1], p[2]))
     const curve = new CatmullRomCurve3(points, true)
-    const tubeGeometry = new TubeGeometry(curve, 500, 10, 8, true)
+    const tubeGeometry = new TubeGeometry(curve, 500, 5, 8, true) // radius 5 instead of 10
     
     return tubeGeometry
   }, [trackData])
