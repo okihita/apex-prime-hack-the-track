@@ -3,8 +3,29 @@
 ## Your Digital Race Engineer for Toyota GR Cup
 
 **Hackathon:** Toyota "Hack the Track" 2025  
-**Win Probability:** 85-95%  
-**Status:** Ready to Build 🚀
+**Status:** ⛔ ABANDONED
+
+---
+
+## Project Cancelled
+
+This project has been discontinued due to:
+- Dataset complexity that proved too chaotic to work with effectively
+- Timeline constraints that made completion unfeasible
+
+### What I Learned
+
+Despite not completing the project, this hackathon was a valuable learning experience:
+- **WebGL** - 3D graphics programming for the web
+- **Web visualization tools** - React Three Fiber, Three.js, and modern 3D web development
+
+### Thank You
+
+A sincere thank you to the Toyota "Hack the Track" 2025 organizers for putting together this hackathon. The challenge was ambitious and the dataset was interesting—it just wasn't the right fit for my timeline and resources.
+
+---
+
+## Original Project Description (Archived)
 
 ---
 
