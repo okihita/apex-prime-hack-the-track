@@ -1,0 +1,74 @@
+{
+  "asset": {
+    "version": "2.0"
+  },
+  "scene": 0,
+  "scenes": [
+    {
+      "nodes": [
+        0
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "mesh": 0,
+      "name": "VIR"
+    }
+  ],
+  "meshes": [
+    {
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 0
+          },
+          "indices": 1,
+          "mode": 3
+        }
+      ]
+    }
+  ],
+  "accessors": [
+    {
+      "bufferView": 0,
+      "componentType": 5126,
+      "count": 66,
+      "type": "VEC3",
+      "max": [
+        240.33333333333334,
+        0.0,
+        35.63636363636363
+      ],
+      "min": [
+        -250.7272727272727,
+        0.0,
+        -208.3030303030303
+      ]
+    },
+    {
+      "bufferView": 1,
+      "componentType": 5123,
+      "count": 66,
+      "type": "SCALAR"
+    }
+  ],
+  "bufferViews": [
+    {
+      "buffer": 0,
+      "byteOffset": 0,
+      "byteLength": 792
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 792,
+      "byteLength": 132
+    }
+  ],
+  "buffers": [
+    {
+      "byteLength": 924,
+      "uri": "VIR.bin"
+    }
+  ]
+}

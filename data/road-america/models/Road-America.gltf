@@ -1,0 +1,74 @@
+{
+  "asset": {
+    "version": "2.0"
+  },
+  "scene": 0,
+  "scenes": [
+    {
+      "nodes": [
+        0
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "mesh": 0,
+      "name": "Road-America"
+    }
+  ],
+  "meshes": [
+    {
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 0
+          },
+          "indices": 1,
+          "mode": 3
+        }
+      ]
+    }
+  ],
+  "accessors": [
+    {
+      "bufferView": 0,
+      "componentType": 5126,
+      "count": 51,
+      "type": "VEC3",
+      "max": [
+        352.7450980392157,
+        0.0,
+        247.60784313725492
+      ],
+      "min": [
+        -378.5490196078431,
+        0.0,
+        -267.921568627451
+      ]
+    },
+    {
+      "bufferView": 1,
+      "componentType": 5123,
+      "count": 51,
+      "type": "SCALAR"
+    }
+  ],
+  "bufferViews": [
+    {
+      "buffer": 0,
+      "byteOffset": 0,
+      "byteLength": 612
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 612,
+      "byteLength": 102
+    }
+  ],
+  "buffers": [
+    {
+      "byteLength": 714,
+      "uri": "Road-America.bin"
+    }
+  ]
+}

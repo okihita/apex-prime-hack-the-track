@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>All Circuits Overlay</title>
+    <style>
+        body { margin: 0; font-family: monospace; }
+        canvas { display: block; }
+        #controls {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: white;
+            background: rgba(0,0,0,0.9);
+            padding: 10px;
+            border-radius: 5px;
+        }
+        button {
+            margin: 5px;
+            padding: 8px;
+            background: #333;
+            color: white;
+            border: 1px solid #666;
+            cursor: pointer;
+        }
+        button:hover { background: #555; }
+        button.active { background: #0066cc; }
+        select {
+            padding: 8px;
+            background: #333;
+            color: white;
+            border: 1px solid #666;
+            font-family: monospace;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div id="controls">
+        <div><strong>Select Circuit:</strong></div>
+        <select id="circuitSelect">
+            <option value="Barber">Barber</option>
+            <option value="COTA">COTA</option>
+            <option value="Indy">Indy</option>
+            <option value="Road-America">Road America</option>
+            <option value="Sebring">Sebring</option>
+            <option value="Sonoma">Sonoma</option>
+            <option value="VIR">VIR</option>
+        </select>
+        <div style="margin-top: 10px; font-size: 11px; color: #aaa;">
+            ← → : Switch circuits<br>
+            Space: Toggle image
+        </div>
+        <div style="margin-top: 10px;"><strong>Toggle:</strong></div>
+        <button id="toggleImage">Hide Image</button>
+        <button id="toggleTrack">Hide Track</button>
+        <div style="margin-top: 10px;"><strong>Track Color:</strong></div>
+        <button onclick="changeColor(0xff0000)">Red</button>
+        <button onclick="changeColor(0x00ff00)">Green</button>
+        <button onclick="changeColor(0xffff00)">Yellow</button>
+        <button onclick="changeColor(0xff00ff)">Magenta</button>
+        <button onclick="changeColor(0xffffff)">White</button>
+    </div>
+    
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+        }
+    }
+    </script>
+    
+    <script type="module">
+        import * as THREE from 'three';
+        import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x0a0a0a);
+        
+        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 2000);
+        camera.position.set(0, 600, 0);
+        camera.lookAt(0, 0, 0);
+        
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+        
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        
+        let imagePlane, trackLine;
+        
+        const circuits = {
+            'Barber': 'Barber_Circuit_Map.png',
+            'COTA': 'COTA_Circuit_Map.png',
+            'Indy': 'Indy_Circuit_Map.png',
+            'Road-America': 'Road_America_Map.png',
+            'Sebring': 'Sebring_Track_Sector_Map.png',
+            'Sonoma': 'Sonoma_Map.png',
+            'VIR': 'VIR_map.png'
+        };
+        
+        const circuitNames = Object.keys(circuits);
+        let currentIndex = 0;
+        
+        function loadCircuit(name) {
+            // Clear existing
+            if (imagePlane) scene.remove(imagePlane);
+            if (trackLine) scene.remove(trackLine.parent);
+            
+            const imageFile = circuits[name];
+            
+            // Update dropdown
+            document.getElementById('circuitSelect').value = name;
+            
+            // Load image
+            const textureLoader = new THREE.TextureLoader();
+            textureLoader.load(`source/images/${imageFile}`, (texture) => {
+                const img = texture.image;
+                const aspect = img.width / img.height;
+                const height = 700;
+                const width = 700 * aspect;
+                
+                const planeGeometry = new THREE.PlaneGeometry(width, height);
+                const planeMaterial = new THREE.MeshBasicMaterial({ 
+                    map: texture,
+                    side: THREE.DoubleSide,
+                    transparent: true,
+                    opacity: 0.8
+                });
+                imagePlane = new THREE.Mesh(planeGeometry, planeMaterial);
+                imagePlane.rotation.x = -Math.PI / 2;
+                imagePlane.position.y = 0;
+                scene.add(imagePlane);
+            });
+            
+            // Load track
+            const loader = new GLTFLoader();
+            loader.load(`output/${name}.gltf`, (gltf) => {
+                trackLine = gltf.scene.children[0];
+                if (trackLine) {
+                    trackLine.material = new THREE.LineBasicMaterial({ 
+                        color: 0xff0000,
+                        linewidth: 5
+                    });
+                    trackLine.position.y = 1;
+                    scene.add(gltf.scene);
+                }
+            });
+        }
+        
+        // Load initial circuit
+        loadCircuit('Barber');
+        
+        // Circuit selector
+        document.getElementById('circuitSelect').onchange = (e) => {
+            const name = e.target.value;
+            currentIndex = circuitNames.indexOf(name);
+            loadCircuit(name);
+        };
+        
+        // Keyboard controls
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+                currentIndex = (currentIndex + 1) % circuitNames.length;
+                loadCircuit(circuitNames[currentIndex]);
+            } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                currentIndex = (currentIndex - 1 + circuitNames.length) % circuitNames.length;
+                loadCircuit(circuitNames[currentIndex]);
+            } else if (e.key === ' ') {
+                e.preventDefault();
+                if (imagePlane) {
+                    imagePlane.visible = !imagePlane.visible;
+                    document.getElementById('toggleImage').textContent = 
+                        imagePlane.visible ? 'Hide Image' : 'Show Image';
+                }
+            }
+        });
+        
+        // Toggle buttons
+        document.getElementById('toggleImage').onclick = () => {
+            if (imagePlane) {
+                imagePlane.visible = !imagePlane.visible;
+                document.getElementById('toggleImage').textContent = 
+                    imagePlane.visible ? 'Hide Image' : 'Show Image';
+            }
+        };
+        
+        document.getElementById('toggleTrack').onclick = () => {
+            if (trackLine) {
+                trackLine.visible = !trackLine.visible;
+                document.getElementById('toggleTrack').textContent = 
+                    trackLine.visible ? 'Hide Track' : 'Show Track';
+            }
+        };
+        
+        window.changeColor = (color) => {
+            if (trackLine) {
+                trackLine.material.color.setHex(color);
+            }
+        };
+        
+        scene.add(new THREE.AmbientLight(0xffffff, 1));
+        
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            renderer.render(scene, camera);
+        }
+        
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+        
+        animate();
+    </script>
+</body>
+</html>

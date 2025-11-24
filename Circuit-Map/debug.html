@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Circuit Debug</title>
+    <style>
+        body { margin: 0; font-family: monospace; }
+        canvas { display: block; }
+        #log {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: white;
+            background: rgba(0,0,0,0.9);
+            padding: 10px;
+            max-width: 400px;
+            max-height: 90vh;
+            overflow-y: auto;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div id="log">Starting...</div>
+    
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+        }
+    }
+    </script>
+    
+    <script type="module">
+        import * as THREE from 'three';
+        import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+        const log = document.getElementById('log');
+        function addLog(msg) {
+            log.innerHTML += '<br>' + msg;
+            console.log(msg);
+        }
+
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x0a0a0a);
+        addLog('Scene created');
+        
+        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 2000);
+        camera.position.set(0, 150, 150);
+        camera.lookAt(0, 0, 0);
+        addLog('Camera at: ' + camera.position.toArray().join(','));
+        
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+        addLog('Renderer ready');
+        
+        const controls = new OrbitControls(camera, renderer.domElement);
+        
+        // Test cube
+        const testCube = new THREE.Mesh(
+            new THREE.BoxGeometry(10, 10, 10),
+            new THREE.MeshStandardMaterial({ color: 0xff0000 })
+        );
+        testCube.position.set(0, 5, 0);
+        scene.add(testCube);
+        addLog('Test cube added');
+        
+        const loader = new GLTFLoader();
+        
+        addLog('Loading Barber.gltf...');
+        loader.load(
+            'output/Barber.gltf',
+            (gltf) => {
+                addLog('✓ GLTF loaded');
+                addLog('Scene children: ' + gltf.scene.children.length);
+                
+                gltf.scene.traverse((child) => {
+                    addLog('- ' + child.type + ' ' + child.name);
+                    if (child.isMesh || child.isLine) {
+                        addLog('  Vertices: ' + child.geometry.attributes.position.count);
+                        addLog('  Position: ' + child.position.toArray().join(','));
+                        
+                        child.material = new THREE.LineBasicMaterial({ 
+                            color: 0x00ff00,
+                            linewidth: 3
+                        });
+                    }
+                });
+                
+                scene.add(gltf.scene);
+                addLog('Added to scene');
+            },
+            (progress) => {
+                addLog('Loading: ' + Math.round(progress.loaded / progress.total * 100) + '%');
+            },
+            (error) => {
+                addLog('ERROR: ' + error.message);
+                console.error(error);
+            }
+        );
+        
+        const light = new THREE.DirectionalLight(0xffffff, 1);
+        light.position.set(100, 200, 100);
+        scene.add(light);
+        scene.add(new THREE.AmbientLight(0xffffff, 2));
+        
+        const gridHelper = new THREE.GridHelper(400, 40);
+        scene.add(gridHelper);
+        addLog('Grid added');
+        
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            renderer.render(scene, camera);
+        }
+        
+        animate();
+        addLog('Animation started');
+    </script>
+</body>
+</html>

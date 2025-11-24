@@ -85,9 +85,27 @@ def generate_track_json(csv_path, output_path, track_name):
     return track_data
 
 if __name__ == "__main__":
-    # Generate Indianapolis track
-    generate_track_json(
-        csv_path="../data/indianapolis/R1_indianapolis_motor_speedway_telemetry.csv",
-        output_path="../frontend/public/tracks/indianapolis.json",
-        track_name="Indianapolis Motor Speedway"
-    )
+    tracks = [
+        ("../data/indianapolis/R1_indianapolis_motor_speedway_telemetry.csv", 
+         "../frontend/public/tracks/indianapolis.json", 
+         "Indianapolis Motor Speedway"),
+        ("../data/barber/R1_barber_telemetry_data.csv", 
+         "../frontend/public/tracks/barber.json", 
+         "Barber Motorsports Park"),
+        ("../data/COTA/Race 1/R1_cota_telemetry_data.csv", 
+         "../frontend/public/tracks/cota.json", 
+         "Circuit of the Americas"),
+        ("../data/sebring/Sebring/Race 1/sebring_telemetry_R1.csv", 
+         "../frontend/public/tracks/sebring.json", 
+         "Sebring International Raceway"),
+        ("../data/road-america/Road America/Race 1/R1_road_america_telemetry_data.csv", 
+         "../frontend/public/tracks/road-america.json", 
+         "Road America"),
+    ]
+    
+    for csv_path, output_path, track_name in tracks:
+        try:
+            generate_track_json(csv_path, output_path, track_name)
+            print()
+        except Exception as e:
+            print(f"✗ Failed to generate {track_name}: {e}\n")

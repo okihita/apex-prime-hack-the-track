@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Circuit Viewer</title>
+    <style>
+        body { margin: 0; font-family: monospace; }
+        canvas { display: block; }
+        #info {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: white;
+            background: rgba(0,0,0,0.7);
+            padding: 10px;
+            border-radius: 5px;
+        }
+        #controls {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.7);
+            padding: 10px;
+            border-radius: 5px;
+        }
+        button {
+            display: block;
+            margin: 5px 0;
+            padding: 8px;
+            background: #333;
+            color: white;
+            border: 1px solid #666;
+            cursor: pointer;
+            width: 150px;
+        }
+        button:hover { background: #555; }
+        button.active { background: #0066cc; }
+    </style>
+</head>
+<body>
+    <div id="info">Loading circuits...</div>
+    <div id="controls"></div>
+    
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+        }
+    }
+    </script>
+    
+    <script type="module">
+        import * as THREE from 'three';
+        import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x0a0a0a);
+        
+        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 2000);
+        camera.position.set(0, 150, 150);
+        
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+        
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        
+        const loader = new GLTFLoader();
+        const circuits = ['Barber', 'COTA', 'Indy', 'Road-America', 'Sebring', 'Sonoma', 'VIR'];
+        const colors = [0xff3366, 0x33ff66, 0x3366ff, 0xffcc33, 0xff33cc, 0x33ccff, 0xccff33];
+        const loadedCircuits = {};
+        let loadCount = 0;
+        
+        const info = document.getElementById('info');
+        const controlsDiv = document.getElementById('controls');
+        
+        circuits.forEach((circuit, i) => {
+            loader.load(
+                `output/${circuit}.gltf`,
+                (gltf) => {
+                    const mesh = gltf.scene.children[0];
+                    if (mesh) {
+                        mesh.material = new THREE.MeshStandardMaterial({ 
+                            color: colors[i],
+                            metalness: 0.3,
+                            roughness: 0.7
+                        });
+                        mesh.visible = false;
+                        scene.add(gltf.scene);
+                        loadedCircuits[circuit] = gltf.scene;
+                        
+                        const btn = document.createElement('button');
+                        btn.textContent = circuit;
+                        btn.onclick = () => toggleCircuit(circuit, btn);
+                        controlsDiv.appendChild(btn);
+                    }
+                    
+                    loadCount++;
+                    info.textContent = `Loaded: ${loadCount}/${circuits.length}`;
+                    if (loadCount === circuits.length) {
+                        info.textContent = `✓ All ${circuits.length} circuits loaded`;
+                    }
+                },
+                undefined,
+                (error) => {
+                    console.error(`Error loading ${circuit}:`, error);
+                    loadCount++;
+                }
+            );
+        });
+        
+        function toggleCircuit(name, btn) {
+            const circuit = loadedCircuits[name];
+            if (circuit) {
+                circuit.visible = !circuit.visible;
+                btn.classList.toggle('active');
+            }
+        }
+        
+        const light1 = new THREE.DirectionalLight(0xffffff, 1);
+        light1.position.set(100, 200, 100);
+        scene.add(light1);
+        
+        const light2 = new THREE.DirectionalLight(0xffffff, 0.5);
+        light2.position.set(-100, 200, -100);
+        scene.add(light2);
+        
+        scene.add(new THREE.AmbientLight(0x404040, 3));
+        
+        const gridHelper = new THREE.GridHelper(400, 40, 0x444444, 0x222222);
+        scene.add(gridHelper);
+        
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            renderer.render(scene, camera);
+        }
+        
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+        
+        animate();
+    </script>
+</body>
+</html>

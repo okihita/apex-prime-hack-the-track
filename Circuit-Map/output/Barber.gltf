@@ -1,0 +1,74 @@
+{
+  "asset": {
+    "version": "2.0"
+  },
+  "scene": 0,
+  "scenes": [
+    {
+      "nodes": [
+        0
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "mesh": 0,
+      "name": "Barber"
+    }
+  ],
+  "meshes": [
+    {
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 0
+          },
+          "indices": 1,
+          "mode": 3
+        }
+      ]
+    }
+  ],
+  "accessors": [
+    {
+      "bufferView": 0,
+      "componentType": 5126,
+      "count": 83,
+      "type": "VEC3",
+      "max": [
+        263.52941176470586,
+        0.0,
+        208.90196078431376
+      ],
+      "min": [
+        -261.05882352941177,
+        0.0,
+        -216.31372549019608
+      ]
+    },
+    {
+      "bufferView": 1,
+      "componentType": 5123,
+      "count": 83,
+      "type": "SCALAR"
+    }
+  ],
+  "bufferViews": [
+    {
+      "buffer": 0,
+      "byteOffset": 0,
+      "byteLength": 996
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 996,
+      "byteLength": 166
+    }
+  ],
+  "buffers": [
+    {
+      "byteLength": 1162,
+      "uri": "Barber.bin"
+    }
+  ]
+}

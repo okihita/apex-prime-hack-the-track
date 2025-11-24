@@ -1,0 +1,74 @@
+{
+  "asset": {
+    "version": "2.0"
+  },
+  "scene": 0,
+  "scenes": [
+    {
+      "nodes": [
+        0
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "mesh": 0,
+      "name": "Sonoma"
+    }
+  ],
+  "meshes": [
+    {
+      "primitives": [
+        {
+          "attributes": {
+            "POSITION": 0
+          },
+          "indices": 1,
+          "mode": 3
+        }
+      ]
+    }
+  ],
+  "accessors": [
+    {
+      "bufferView": 0,
+      "componentType": 5126,
+      "count": 60,
+      "type": "VEC3",
+      "max": [
+        244.78787878787875,
+        0.0,
+        -0.2121212121212135
+      ],
+      "min": [
+        -231.4242424242424,
+        0.0,
+        -173.30303030303028
+      ]
+    },
+    {
+      "bufferView": 1,
+      "componentType": 5123,
+      "count": 60,
+      "type": "SCALAR"
+    }
+  ],
+  "bufferViews": [
+    {
+      "buffer": 0,
+      "byteOffset": 0,
+      "byteLength": 720
+    },
+    {
+      "buffer": 0,
+      "byteOffset": 720,
+      "byteLength": 120
+    }
+  ],
+  "buffers": [
+    {
+      "byteLength": 840,
+      "uri": "Sonoma.bin"
+    }
+  ]
+}

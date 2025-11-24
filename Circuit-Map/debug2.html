@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Circuit Segments Debug</title>
+    <style>
+        body { margin: 0; font-family: monospace; }
+        canvas { display: block; }
+        #log {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: white;
+            background: rgba(0,0,0,0.9);
+            padding: 10px;
+            max-width: 400px;
+            max-height: 90vh;
+            overflow-y: auto;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div id="log">Loading image...</div>
+    
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+        }
+    }
+    </script>
+    
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+        const log = document.getElementById('log');
+        function addLog(msg) {
+            log.innerHTML += '<br>' + msg;
+            console.log(msg);
+        }
+
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x0a0a0a);
+        
+        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 2000);
+        camera.position.set(0, 300, 300);
+        camera.lookAt(0, 0, 0);
+        
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+        
+        const controls = new OrbitControls(camera, renderer.domElement);
+        
+        // Load and display the original image as texture on a plane
+        const textureLoader = new THREE.TextureLoader();
+        textureLoader.load('source/images/Barber_Circuit_Map.png', (texture) => {
+            const aspect = texture.image.width / texture.image.height;
+            const planeGeometry = new THREE.PlaneGeometry(500 * aspect, 500);
+            const planeMaterial = new THREE.MeshBasicMaterial({ 
+                map: texture,
+                side: THREE.DoubleSide
+            });
+            const plane = new THREE.Mesh(planeGeometry, planeMaterial);
+            plane.rotation.x = -Math.PI / 2;
+            plane.position.y = -5;
+            scene.add(plane);
+            addLog('✓ Image loaded as reference');
+        });
+        
+        const light = new THREE.DirectionalLight(0xffffff, 1);
+        light.position.set(100, 200, 100);
+        scene.add(light);
+        scene.add(new THREE.AmbientLight(0xffffff, 2));
+        
+        const gridHelper = new THREE.GridHelper(600, 60, 0x444444, 0x222222);
+        scene.add(gridHelper);
+        
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            renderer.render(scene, camera);
+        }
+        
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+        
+        animate();
+        addLog('Showing original image for reference');
+        addLog('This shows what the track should look like');
+    </script>
+</body>
+</html>
