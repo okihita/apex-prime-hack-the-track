@@ -19,9 +19,18 @@ function Scene({ trackData, cameraMode, isPlaying }) {
   
   return (
     <>
-      {/* Lighting */}
-      <ambientLight intensity={0.5} />
-      <directionalLight position={[100, 100, 50]} intensity={1} />
+      {/* Lighting - improved */}
+      <ambientLight intensity={0.6} />
+      <directionalLight 
+        position={[100, 200, 100]} 
+        intensity={1.5}
+        castShadow
+      />
+      <directionalLight 
+        position={[-100, 100, -100]} 
+        intensity={0.5}
+      />
+      <hemisphereLight intensity={0.3} groundColor="#444" />
       
       {/* Sky */}
       <Sky sunPosition={[100, 20, 100]} />

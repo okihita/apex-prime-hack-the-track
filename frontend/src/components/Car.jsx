@@ -47,10 +47,16 @@ export default function Car({ position, rotation, speed, steeringAngle }) {
   
   return (
     <group ref={carRef}>
-      {/* Car body */}
-      <mesh position={[0, 0, 0]}>
+      {/* Car body - brighter red with emissive */}
+      <mesh position={[0, 0, 0]} castShadow>
         <boxGeometry args={[carWidth, carHeight, carLength]} />
-        <meshStandardMaterial color="#cc0000" metalness={0.6} roughness={0.4} />
+        <meshStandardMaterial 
+          color="#ff0000"
+          emissive="#660000"
+          emissiveIntensity={0.3}
+          metalness={0.8}
+          roughness={0.2}
+        />
       </mesh>
       
       {/* Wheels - bigger */}

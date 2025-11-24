@@ -5,20 +5,9 @@ export default function Track({ trackData }) {
   const geometry = useMemo(() => {
     if (!trackData || !trackData.points) return null
     
-    // Convert points to Vector3
     const points = trackData.points.map(p => new Vector3(p[0], p[1], p[2]))
-    
-    // Create smooth curve
-    const curve = new CatmullRomCurve3(points, true) // true = closed loop
-    
-    // Create tube geometry along curve
-    const tubeGeometry = new TubeGeometry(
-      curve,
-      500,  // segments
-      10,   // radius (track width)
-      8,    // radial segments
-      true  // closed
-    )
+    const curve = new CatmullRomCurve3(points, true)
+    const tubeGeometry = new TubeGeometry(curve, 500, 10, 8, true)
     
     return tubeGeometry
   }, [trackData])
@@ -26,11 +15,11 @@ export default function Track({ trackData }) {
   if (!geometry) return null
   
   return (
-    <mesh geometry={geometry}>
+    <mesh geometry={geometry} receiveShadow>
       <meshStandardMaterial 
-        color="#333333" 
-        roughness={0.8}
-        metalness={0.2}
+        color="#1a1a1a"
+        roughness={0.9}
+        metalness={0.1}
       />
     </mesh>
   )
